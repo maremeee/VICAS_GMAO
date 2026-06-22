@@ -1,0 +1,48 @@
+/* buttons.css — all button variants and icon buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  border-radius: 0.5rem;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease,
+              border-color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary { background: var(--navy); color: white; box-shadow: 0 1px 4px rgba(14,33,84,0.18); }
+.btn-primary:hover:not(:disabled) { background: var(--navy-soft); }
+
+.btn-orange { background: var(--accent); color: white; box-shadow: 0 1px 4px rgba(249,115,22,0.25); }
+.btn-orange:hover:not(:disabled) { background: #ea6c0c; }
+
+.btn-ghost { background: transparent; color: var(--foreground); }
+.btn-ghost:hover:not(:disabled) { background: var(--surface-2); }
+
+.btn-outline { background: transparent; border-color: var(--border); color: var(--foreground); }
+.btn-outline:hover:not(:disabled) { border-color: var(--brand); background: var(--surface-2); color: var(--brand); }
+
+.btn-danger { background: var(--critical); color: white; }
+.btn-danger:hover:not(:disabled) { background: #c71e1e; }
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 0.5rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+.btn-icon:hover { background: var(--surface-2); color: var(--foreground); }

@@ -1,0 +1,73 @@
+/* dashboard — layout grids and semantic sections */
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 640px)  { .kpiGrid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .kpiGrid { grid-template-columns: repeat(6, 1fr); } }
+
+.kpiGridSmall {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 640px) { .kpiGridSmall { grid-template-columns: repeat(3, 1fr); } }
+
+.mainRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 1024px) { .mainRow { grid-template-columns: 2fr 1fr; } }
+
+.chartsRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 1024px) { .chartsRow { grid-template-columns: 1fr 1fr; } }
+
+.tablesRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 1024px) { .tablesRow { grid-template-columns: 1fr 1fr; } }
+
+.statusItem { margin-bottom: 0.875rem; }
+.statusLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.375rem;
+  font-size: 0.75rem;
+}
+
+.alertItem {
+  border-radius: 0.625rem;
+  padding: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--surface-2);
+}
+.alertsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) { .alertsGrid { grid-template-columns: 1fr 1fr; } }
+
+.sectionTitle {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  margin-bottom: 1rem;
+}

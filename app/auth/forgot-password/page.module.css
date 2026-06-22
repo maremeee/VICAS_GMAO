@@ -1,0 +1,126 @@
+/* forgot-password — fond marine avec formulaire flottant */
+
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+  background: linear-gradient(160deg, #0c1d47 0%, #081230 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.wrapper::before {
+  content: "";
+  position: absolute;
+  top: -10rem;
+  right: -10rem;
+  width: 36rem;
+  height: 36rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(249,115,22,0.10) 0%, transparent 65%);
+  pointer-events: none;
+}
+.wrapper::after {
+  content: "";
+  position: absolute;
+  bottom: -8rem;
+  left: -8rem;
+  width: 28rem;
+  height: 28rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(34,81,217,0.14) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 1.25rem;
+  padding: 2.25rem 2rem;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.40),
+    0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 1.75rem;
+}
+.logoIcon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.logoName {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #0e2154;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0e2154;
+  margin-bottom: 0.25rem;
+}
+.subText {
+  font-size: 0.875rem;
+  color: #6272a0;
+  margin-bottom: 1.5rem;
+}
+
+.successBox {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.successIcon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: rgba(5, 150, 105, 0.12);
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+.successTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0e2154;
+}
+.successText {
+  font-size: 0.875rem;
+  color: #6272a0;
+  line-height: 1.6;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2251d9;
+  text-decoration: none;
+  margin-top: 1.75rem;
+  transition: opacity 0.15s;
+}
+.backLink:hover { opacity: 0.75; }

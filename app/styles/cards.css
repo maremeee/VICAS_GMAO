@@ -1,0 +1,27 @@
+/* cards.css — card and stat-card surfaces */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  box-shadow: 0 1px 4px rgba(14,33,84,0.04);
+  transition: box-shadow 0.2s ease;
+}
+.card-p { padding: 1.25rem; }
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  box-shadow: 0 1px 4px rgba(14,33,84,0.04);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+.stat-card:hover {
+  border-color: var(--brand);
+  box-shadow: 0 4px 16px rgba(34,81,217,0.10);
+  transform: translateY(-1px);
+}

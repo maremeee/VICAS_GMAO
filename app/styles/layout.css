@@ -1,0 +1,21 @@
+/* layout.css — shared page header primitives (used across all pages) */
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+.page-sub {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}

@@ -1,0 +1,18 @@
+/* navigation.css — sidebar nav items */
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.58);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
+
+.nav-item-active { background: rgba(249,115,22,0.18); color: #fb923c; font-weight: 600; }
+.dark .nav-item-active { background: rgba(249,115,22,0.20); }
+.nav-item-active:hover { background: rgba(249,115,22,0.22); color: #fb923c; }

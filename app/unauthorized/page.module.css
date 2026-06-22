@@ -1,0 +1,32 @@
+/* unauthorized — centered error page */
+
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--background);
+}
+.box {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(14,33,84,0.08);
+}
+.iconBox {
+  width: 4rem; height: 4rem;
+  border-radius: 999px;
+  background: rgba(220,38,38,0.10);
+  color: var(--critical);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.25rem;
+}
+.title    { font-size: 1.5rem; font-weight: 700; color: var(--foreground); margin-bottom: 0.5rem; }
+.sub      { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.5rem; }
+.roleRow  { display: flex; justify-content: center; margin-bottom: 1.75rem; }
+.actions  { display: flex; flex-direction: column; gap: 0.625rem; }

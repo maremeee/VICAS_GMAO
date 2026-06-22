@@ -1,0 +1,28 @@
+/* table.css — data table components */
+
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(14,33,84,0.04);
+}
+table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+.table-header {
+  background: var(--surface-2);
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  padding: 0.65rem 1rem;
+  white-space: nowrap;
+}
+.table-cell {
+  padding: 0.72rem 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--foreground);
+  vertical-align: middle;
+}
+.table-row { background: var(--surface); transition: background-color 0.1s ease; }
+.table-row:hover { background: var(--surface-2); }

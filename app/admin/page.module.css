@@ -1,0 +1,102 @@
+/* admin — users table, roles grid, permissions matrix */
+
+.tabBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 640px) { .statsGrid { grid-template-columns: repeat(3, 1fr); } }
+
+.controlBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.controlLeft { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--navy);
+  flex-shrink: 0;
+}
+
+.rolesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 640px)  { .rolesGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .rolesGrid { grid-template-columns: repeat(3, 1fr); } }
+
+.roleCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 4px rgba(14,33,84,0.04);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.roleCard:hover { border-color: var(--brand); box-shadow: 0 4px 16px rgba(34,81,217,0.10); }
+.roleCardTop    { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.roleIcon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+.roleDesc { font-size: 0.8125rem; color: var(--muted); line-height: 1.5; margin-bottom: 0.75rem; }
+.roleMeta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--muted); }
+
+.permRoleBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.permOk {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5,150,105,0.12);
+  color: var(--success);
+}
+.permNo {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(220,38,38,0.08);
+  color: var(--muted);
+}
+
+.moduleLabel { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 0.75rem; }

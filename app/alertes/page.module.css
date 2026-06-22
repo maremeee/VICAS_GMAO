@@ -1,0 +1,62 @@
+/* alertes — alert cards grouped by severity level */
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 640px)  { .kpiGrid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .kpiGrid { grid-template-columns: repeat(6, 1fr); } }
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.levelPills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.typeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.levelSection { margin-bottom: 2rem; }
+.levelHeader  { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+
+.alertsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 640px)  { .alertsGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .alertsGrid { grid-template-columns: repeat(3, 1fr); } }
+
+.alertCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 1px 4px rgba(14,33,84,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.alertCardTop    { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.alertCardPlate  { display: flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.875rem; color: var(--foreground); }
+.alertCardMsg    { font-size: 0.8125rem; color: var(--foreground); line-height: 1.4; }
+.alertCardFoot   { display: flex; align-items: center; gap: 0.75rem; font-size: 0.75rem; color: var(--muted); }
+.alertCardFootItem { display: flex; align-items: center; gap: 0.25rem; }
+.treatedText     { font-size: 0.75rem; color: var(--success); margin-top: 0.25rem; }
+
+/* border-left colour per level */
+.borderCritical { border-left-color: var(--critical); }
+.borderDanger   { border-left-color: var(--accent);   }
+.borderWarning  { border-left-color: var(--warning);  }
+.borderInfo     { border-left-color: var(--brand);    }
