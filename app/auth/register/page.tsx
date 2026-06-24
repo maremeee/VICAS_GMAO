@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/Button";
 import type { Role } from "@/types";
 
 const ROLES: Role[] = [
-  "administrateur",
+  
   "responsable_logistique",
   "chef_atelier",
   "mecanicien",
