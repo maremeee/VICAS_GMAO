@@ -1,160 +1,93 @@
+// lib/data-store.ts — version mock (sans backend)
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type {
-  Vehicle,
-  Chantier,
-  Driver,
-  Mechanic,
-  WorkOrder,
-  FuelRecord,
-  Assignment,
-  Alert,
-} from "@/types";
 import {
-  MOCK_VEHICLES,
-  MOCK_CHANTIERS,
-  MOCK_DRIVERS,
-  MOCK_MECHANICS,
-  MOCK_WORK_ORDERS,
-  MOCK_FUEL_RECORDS,
-  MOCK_ASSIGNMENTS,
-  MOCK_ALERTS,
-} from "@/lib/mock-data";
-import { uid } from "@/lib/utils";
+  MOCK_VEHICLES, MOCK_WORK_ORDERS, MOCK_FUEL_RECORDS,
+  MOCK_ASSIGNMENTS, MOCK_ALERTS, MOCK_CHANTIERS,
+  MOCK_DRIVERS, MOCK_MECHANICS,
+} from "./mock-data";
 
-interface DataState {
-  vehicles: Vehicle[];
-  chantiers: Chantier[];
-  drivers: Driver[];
-  mechanics: Mechanic[];
-  workOrders: WorkOrder[];
-  fuelRecords: FuelRecord[];
-  assignments: Assignment[];
-  alerts: Alert[];
-
-  // Vehicles
-  addVehicle: (v: Omit<Vehicle, "id">) => void;
-  updateVehicle: (id: string, data: Partial<Vehicle>) => void;
-  deleteVehicle: (id: string) => void;
-
-  // Work orders
-  addWorkOrder: (wo: Omit<WorkOrder, "id" | "number">) => void;
-  updateWorkOrder: (id: string, data: Partial<WorkOrder>) => void;
-  closeWorkOrder: (id: string) => void;
-  deleteWorkOrder: (id: string) => void;
-
-  // Fuel
-  addFuelRecord: (f: Omit<FuelRecord, "id">) => void;
-
-  // Assignments
-  addAssignment: (a: Omit<Assignment, "id">) => void;
-  endAssignment: (id: string, returnKm: number) => void;
-
-  // Alerts
-  markAlertTreated: (id: string) => void;
-}
-
-export const useDataStore = create<DataState>()(
+export const useDataStore = create<any>()(
   persist(
     (set, get) => ({
-      vehicles: MOCK_VEHICLES,
-      chantiers: MOCK_CHANTIERS,
-      drivers: MOCK_DRIVERS,
-      mechanics: MOCK_MECHANICS,
-      workOrders: MOCK_WORK_ORDERS,
+      vehicles:    MOCK_VEHICLES,
+      workOrders:  MOCK_WORK_ORDERS,
       fuelRecords: MOCK_FUEL_RECORDS,
       assignments: MOCK_ASSIGNMENTS,
-      alerts: MOCK_ALERTS,
+      alerts:      MOCK_ALERTS,
+      chantiers:   MOCK_CHANTIERS,
+      drivers:     MOCK_DRIVERS,
+      mechanics:   MOCK_MECHANICS,
+      loading:     false,
+      error:       null,
 
-      addVehicle: (v) =>
-        set({ vehicles: [{ ...v, id: uid("v") }, ...get().vehicles] }),
+      fetchAll:         async () => {},
+      fetchVehicles:    async () => {},
+      fetchWorkOrders:  async () => {},
+      fetchFuelRecords: async () => {},
+      fetchAssignments: async () => {},
+      fetchAlerts:      async () => {},
+      fetchChantiers:   async () => {},
+      fetchDrivers:     async () => {},
+      fetchMechanics:   async () => {},
 
-      updateVehicle: (id, data) =>
-        set({
-          vehicles: get().vehicles.map((v) =>
-            v.id === id ? { ...v, ...data } : v
-          ),
-        }),
+      addVehicle: (data: any) => set((s: any) => ({
+        vehicles: [...s.vehicles, { ...data, id: Date.now().toString() }]
+      })),
+      updateVehicle: (id: any, data: any) => set((s: any) => ({
+        vehicles: s.vehicles.map((v: any) => v.id === id ? { ...v, ...data } : v)
+      })),
+      deleteVehicle: (id: any) => set((s: any) => ({
+        vehicles: s.vehicles.filter((v: any) => v.id !== id)
+      })),
 
-      deleteVehicle: (id) =>
-        set({ vehicles: get().vehicles.filter((v) => v.id !== id) }),
+      addWorkOrder: (data: any) => set((s: any) => ({
+        workOrders: [...s.workOrders, { ...data, id: Date.now().toString() }]
+      })),
+      updateWorkOrder: (id: any, data: any) => set((s: any) => ({
+        workOrders: s.workOrders.map((w: any) => w.id === id ? { ...w, ...data } : w)
+      })),
+      closeWorkOrder: (id: any) => set((s: any) => ({
+        workOrders: s.workOrders.map((w: any) => w.id === id ? { ...w, status: "cloture" } : w)
+      })),
+      deleteWorkOrder: (id: any) => set((s: any) => ({
+        workOrders: s.workOrders.filter((w: any) => w.id !== id)
+      })),
 
-      addWorkOrder: (wo) => {
-        const count = get().workOrders.length + 41;
-        const number = `BT-2026-${String(count).padStart(4, "0")}`;
-        set({
-          workOrders: [{ ...wo, id: uid("bt"), number }, ...get().workOrders],
-        });
-      },
+      addFuelRecord: (data: any) => set((s: any) => ({
+        fuelRecords: [...s.fuelRecords, { ...data, id: Date.now().toString() }]
+      })),
+      deleteFuelRecord: (id: any) => set((s: any) => ({
+        fuelRecords: s.fuelRecords.filter((f: any) => f.id !== id)
+      })),
 
-      updateWorkOrder: (id, data) =>
-        set({
-          workOrders: get().workOrders.map((w) =>
-            w.id === id ? { ...w, ...data } : w
-          ),
-        }),
+      addAssignment: (data: any) => set((s: any) => ({
+        assignments: [...s.assignments, { ...data, id: Date.now().toString() }]
+      })),
+      endAssignment: (id: any, returnKm: any) => set((s: any) => ({
+        assignments: s.assignments.map((a: any) =>
+          a.id === id ? { ...a, status: "terminee", returnKm } : a
+        )
+      })),
 
-      closeWorkOrder: (id) =>
-        set({
-          workOrders: get().workOrders.map((w) =>
-            w.id === id ? { ...w, status: "cloture" } : w
-          ),
-        }),
+      addAlert: (data: any) => set((s: any) => ({
+        alerts: [...s.alerts, { ...data, id: Date.now().toString() }]
+      })),
+      markAlertTreated: (id: any) => set((s: any) => ({
+        alerts: s.alerts.map((a: any) =>
+          a.id === id ? { ...a, treated: true, treatedAt: new Date().toISOString() } : a
+        )
+      })),
 
-      deleteWorkOrder: (id) =>
-        set({ workOrders: get().workOrders.filter((w) => w.id !== id) }),
-
-      addFuelRecord: (f) =>
-        set({ fuelRecords: [{ ...f, id: uid("f") }, ...get().fuelRecords] }),
-
-      addAssignment: (a) => {
-        set({
-          assignments: [{ ...a, id: uid("a") }, ...get().assignments],
-          vehicles: get().vehicles.map((v) =>
-            v.id === a.vehicleId ? { ...v, status: "en_mission" } : v
-          ),
-          drivers: get().drivers.map((d) =>
-            d.id === a.driverId ? { ...d, status: "en_mission" } : d
-          ),
-        });
-      },
-
-      endAssignment: (id, returnKm) => {
-        const assignment = get().assignments.find((a) => a.id === id);
-        set({
-          assignments: get().assignments.map((a) =>
-            a.id === id
-              ? {
-                  ...a,
-                  status: "terminee",
-                  endDate: new Date().toISOString().slice(0, 10),
-                  returnKm,
-                }
-              : a
-          ),
-          vehicles: assignment
-            ? get().vehicles.map((v) =>
-                v.id === assignment.vehicleId
-                  ? { ...v, status: "disponible", km: returnKm > v.km ? returnKm : v.km }
-                  : v
-              )
-            : get().vehicles,
-          drivers: assignment
-            ? get().drivers.map((d) =>
-                d.id === assignment.driverId ? { ...d, status: "disponible" } : d
-              )
-            : get().drivers,
-        });
-      },
-
-      markAlertTreated: (id) =>
-        set({
-          alerts: get().alerts.map((a) =>
-            a.id === id
-              ? { ...a, treated: true, treatedAt: new Date().toISOString().slice(0, 10) }
-              : a
-          ),
-        }),
+      addChantier: (data: any) => set((s: any) => ({
+        chantiers: [...s.chantiers, { ...data, id: Date.now().toString() }]
+      })),
+      updateChantier: (id: any, data: any) => set((s: any) => ({
+        chantiers: s.chantiers.map((c: any) => c.id === id ? { ...c, ...data } : c)
+      })),
+      deleteChantier: (id: any) => set((s: any) => ({
+        chantiers: s.chantiers.filter((c: any) => c.id !== id)
+      })),
     }),
     {
       name: "vicas-data-storage",

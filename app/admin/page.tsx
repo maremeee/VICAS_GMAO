@@ -2,28 +2,13 @@
 
 import styles from "./page.module.css";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Users,
-  UserCheck,
-  UserX,
-  Plus,
-  Pencil,
-  Trash2,
-  Power,
-  Shield,
-  Check,
-  X as XIcon,
-  Truck,
-  Wrench,
-  ClipboardList,
-  Fuel,
-  MapPin,
-  Bell,
-  BarChart3,
-  LayoutDashboard,
+  Users, UserCheck, UserX, Plus, Pencil, Trash2, Power,
+  Shield, Check, X as XIcon, Truck, Wrench, ClipboardList,
+  Fuel, MapPin, Bell, BarChart3, LayoutDashboard,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { StatCard } from "@/components/ui/StatCard";
@@ -32,20 +17,15 @@ import { Modal } from "@/components/ui/Modal";
 import { Confirm } from "@/components/ui/Confirm";
 import { Field, Input, Select } from "@/components/ui/Field";
 import { SearchBar, TableWrap, Empty, Badge, RoleBadge } from "@/components/ui/Shared";
-import { useAuthStore } from "@/lib/auth-store";
 import { useToastStore } from "@/lib/toast-store";
+import { api } from "@/lib/api";
 import {
-  ROLE_LABELS,
-  ROLE_BADGE_CLASS,
-  NAV_ITEMS,
-  canAccess,
-  canCreate,
-  canEdit,
-  canDelete,
+  ROLE_LABELS, NAV_ITEMS,
+  canAccess, canCreate, canEdit, canDelete,
 } from "@/lib/permissions";
 import { userSchema, type UserInput } from "@/lib/validations";
 import { formatDate, initials } from "@/lib/utils";
-import type { Role, User } from "@/types";
+import type { Role } from "@/types";
 
 type Tab = "utilisateurs" | "roles" | "permissions";
 
@@ -56,12 +36,8 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 const ROLES: Role[] = [
-  "administrateur",
-  "responsable_logistique",
-  "chef_atelier",
-  "mecanicien",
-  "chauffeur",
-  "direction",
+  "administrateur", "responsable_logistique", "chef_atelier",
+  "mecanicien", "chauffeur", "direction",
 ];
 
 const ROLE_DESCRIPTIONS: Record<Role, string> = {
@@ -74,52 +50,63 @@ const ROLE_DESCRIPTIONS: Record<Role, string> = {
 };
 
 const ROLE_GRADIENT: Record<Role, string> = {
-  administrateur: "linear-gradient(135deg,#f97316,#ea580c)",
+  administrateur:         "linear-gradient(135deg,#f97316,#ea580c)",
   responsable_logistique: "linear-gradient(135deg,#1e3a8a,#1e40af)",
-  chef_atelier: "linear-gradient(135deg,#7c3aed,#6d28d9)",
-  mecanicien: "linear-gradient(135deg,#475569,#334155)",
-  chauffeur: "linear-gradient(135deg,#10b981,#059669)",
-  direction: "linear-gradient(135deg,#f59e0b,#d97706)",
+  chef_atelier:           "linear-gradient(135deg,#7c3aed,#6d28d9)",
+  mecanicien:             "linear-gradient(135deg,#475569,#334155)",
+  chauffeur:              "linear-gradient(135deg,#10b981,#059669)",
+  direction:              "linear-gradient(135deg,#f59e0b,#d97706)",
 };
 
 const MODULE_ICONS: Record<string, React.ReactNode> = {
-  dashboard: <LayoutDashboard size={15} />,
-  parc: <Truck size={15} />,
-  maintenance: <Wrench size={15} />,
+  dashboard:      <LayoutDashboard size={15} />,
+  parc:           <Truck size={15} />,
+  maintenance:    <Wrench size={15} />,
   "bons-travail": <ClipboardList size={15} />,
-  carburant: <Fuel size={15} />,
-  logistique: <MapPin size={15} />,
-  alertes: <Bell size={15} />,
-  rapports: <BarChart3 size={15} />,
-  admin: <Shield size={15} />,
+  carburant:      <Fuel size={15} />,
+  logistique:     <MapPin size={15} />,
+  alertes:        <Bell size={15} />,
+  rapports:       <BarChart3 size={15} />,
+  admin:          <Shield size={15} />,
 };
 
 export default function AdminPage() {
-  const { users, addUser, updateUser, deleteUser, toggleUserActive } = useAuthStore();
   const showToast = useToastStore((s) => s.show);
 
-  const [tab, setTab] = useState<Tab>("utilisateurs");
-  const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState<Role | "all">("all");
-  const [formOpen, setFormOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
-  const [permRole, setPermRole] = useState<Role>("administrateur");
+  const [users,        setUsers]        = useState<any[]>([]);
+  const [tab,          setTab]          = useState<Tab>("utilisateurs");
+  const [search,       setSearch]       = useState("");
+  const [roleFilter,   setRoleFilter]   = useState<Role | "all">("all");
+  const [formOpen,     setFormOpen]     = useState(false);
+  const [editingUser,  setEditingUser]  = useState<any | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+  const [permRole,     setPermRole]     = useState<Role>("administrateur");
 
-  const stats = useMemo(() => {
-    return {
-      total: users.length,
-      active: users.filter((u) => u.active).length,
-      inactive: users.filter((u) => !u.active).length,
-    };
-  }, [users]);
+  async function loadUsers() {
+    try {
+      const data = await api.get<any[]>("/admin/users");
+      setUsers(data);
+    } catch {
+      showToast("Erreur lors du chargement des utilisateurs.", "error");
+    }
+  }
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const stats = useMemo(() => ({
+    total:    users.length,
+    active:   users.filter((u) => u.active).length,
+    inactive: users.filter((u) => !u.active).length,
+  }), [users]);
 
   const filtered = useMemo(() => {
     return users.filter((u) => {
       if (roleFilter !== "all" && u.role !== roleFilter) return false;
       if (search) {
-        const q = search.toLowerCase();
-        const full = `${u.firstName} ${u.lastName} ${u.email}`.toLowerCase();
+        const q    = search.toLowerCase();
+        const full = `${u.first_name} ${u.last_name} ${u.email}`.toLowerCase();
         if (!full.includes(q)) return false;
       }
       return true;
@@ -134,12 +121,8 @@ export default function AdminPage() {
   } = useForm<UserInput>({
     resolver: zodResolver(userSchema) as any,
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      role: "chauffeur",
-      active: true,
+      firstName: "", lastName: "", email: "",
+      phone: "", role: "chauffeur", active: true,
     },
   });
 
@@ -149,33 +132,69 @@ export default function AdminPage() {
     setFormOpen(true);
   }
 
-  function openEdit(u: User) {
+  function openEdit(u: any) {
     setEditingUser(u);
     reset({
-      firstName: u.firstName,
-      lastName: u.lastName,
-      email: u.email,
-      phone: u.phone,
-      role: u.role,
-      active: u.active,
+      firstName: u.first_name,
+      lastName:  u.last_name,
+      email:     u.email,
+      phone:     u.phone,
+      role:      u.role,
+      active:    u.active,
     });
     setFormOpen(true);
   }
 
-  function onSubmit(data: UserInput) {
-    if (editingUser) {
-      updateUser(editingUser.id, data);
-      showToast("Utilisateur mis à jour.", "success");
-    } else {
-      const exists = users.some((u) => u.email.toLowerCase() === data.email.toLowerCase());
-      if (exists) {
-        showToast("Un utilisateur existe déjà avec cet email.", "error");
-        return;
+  async function onSubmit(data: UserInput) {
+    try {
+      if (editingUser) {
+        await api.put(`/admin/users/${editingUser.id}`, {
+          first_name: data.firstName,
+          last_name:  data.lastName,
+          email:      data.email,
+          phone:      data.phone,
+          role:       data.role,
+          active:     data.active,
+        });
+        showToast("Utilisateur mis à jour.", "success");
+      } else {
+        await api.post("/admin/users", {
+          first_name: data.firstName,
+          last_name:  data.lastName,
+          email:      data.email,
+          phone:      data.phone,
+          role:       data.role,
+          password:   "demo1234",
+          active:     data.active,
+        });
+        showToast("Utilisateur créé avec succès.", "success");
       }
-      addUser(data);
-      showToast("Utilisateur créé avec succès.", "success");
+      setFormOpen(false);
+      loadUsers();
+    } catch (err: any) {
+      showToast(err.message ?? "Erreur lors de l'opération.", "error");
     }
-    setFormOpen(false);
+  }
+
+  async function handleDelete(u: any) {
+    try {
+      await api.delete(`/admin/users/${u.id}`);
+      showToast("Utilisateur supprimé.", "success");
+      loadUsers();
+    } catch (err: any) {
+      showToast(err.message ?? "Erreur lors de la suppression.", "error");
+    }
+    setDeleteTarget(null);
+  }
+
+  async function handleToggleActive(u: any) {
+    try {
+      await api.patch(`/admin/users/${u.id}/toggle-active`);
+      showToast(u.active ? "Utilisateur désactivé." : "Utilisateur activé.", "info");
+      loadUsers();
+    } catch (err: any) {
+      showToast(err.message ?? "Erreur.", "error");
+    }
   }
 
   return (
@@ -196,7 +215,7 @@ export default function AdminPage() {
             className="btn"
             style={{
               background: tab === t.key ? "var(--navy)" : "var(--surface)",
-              color: tab === t.key ? "white" : "var(--foreground)",
+              color:      tab === t.key ? "white"       : "var(--foreground)",
               border: `1px solid ${tab === t.key ? "var(--navy)" : "var(--border)"}`,
             }}
           >
@@ -208,9 +227,9 @@ export default function AdminPage() {
       {tab === "utilisateurs" && (
         <div>
           <div className={styles.statsGrid}>
-            <StatCard title="Total utilisateurs" value={stats.total} icon={<Users size={18} />} color="navy" />
-            <StatCard title="Actifs" value={stats.active} icon={<UserCheck size={18} />} color="green" />
-            <StatCard title="Inactifs" value={stats.inactive} icon={<UserX size={18} />} color="red" />
+            <StatCard title="Total utilisateurs" value={stats.total}    icon={<Users size={18} />}     color="navy" />
+            <StatCard title="Actifs"              value={stats.active}   icon={<UserCheck size={18} />} color="green" />
+            <StatCard title="Inactifs"            value={stats.inactive} icon={<UserX size={18} />}     color="red" />
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -224,14 +243,17 @@ export default function AdminPage() {
               </Select>
             </div>
             <Button variant="orange" onClick={openCreate}>
-              <Plus size={16} />
-              Nouvel utilisateur
+              <Plus size={16} /> Nouvel utilisateur
             </Button>
           </div>
 
           {filtered.length === 0 ? (
             <div className="card">
-              <Empty icon={<Users size={24} />} title="Aucun utilisateur" description="Aucun utilisateur ne correspond aux filtres sélectionnés." />
+              <Empty
+                icon={<Users size={24} />}
+                title="Aucun utilisateur"
+                description="Aucun utilisateur ne correspond aux filtres sélectionnés."
+              />
             </div>
           ) : (
             <TableWrap>
@@ -256,30 +278,28 @@ export default function AdminPage() {
                           className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
                           style={{ background: "var(--surface-2)", color: "var(--navy)" }}
                         >
-                          {initials(u.firstName, u.lastName)}
+                          {initials(u.first_name, u.last_name)}
                         </div>
                       </td>
-                      <td className="table-cell font-semibold">{u.firstName} {u.lastName}</td>
+                      <td className="table-cell font-semibold">{u.first_name} {u.last_name}</td>
                       <td className="table-cell">{u.email}</td>
                       <td className="table-cell"><RoleBadge role={u.role} /></td>
                       <td className="table-cell">{u.phone}</td>
                       <td className="table-cell">
-                        <Badge color={u.active ? "green" : "slate"}>{u.active ? "Actif" : "Inactif"}</Badge>
+                        <Badge color={u.active ? "green" : "slate"}>
+                          {u.active ? "Actif" : "Inactif"}
+                        </Badge>
                       </td>
-                      <td className="table-cell">{formatDate(u.createdAt)}</td>
+                      <td className="table-cell">{formatDate(u.created_at)}</td>
                       <td className="table-cell">
                         <div className="flex items-center gap-1">
-                          <button className="btn-icon" type="button" aria-label="Modifier" onClick={() => openEdit(u)}>
+                          <button className="btn-icon" type="button" onClick={() => openEdit(u)}>
                             <Pencil size={15} />
                           </button>
                           <button
                             className="btn-icon"
                             type="button"
-                            aria-label="Activer/désactiver"
-                            onClick={() => {
-                              toggleUserActive(u.id);
-                              showToast(u.active ? "Utilisateur désactivé." : "Utilisateur activé.", "info");
-                            }}
+                            onClick={() => handleToggleActive(u)}
                             style={{ color: u.active ? "var(--warning)" : "var(--success)" }}
                           >
                             <Power size={15} />
@@ -287,7 +307,6 @@ export default function AdminPage() {
                           <button
                             className="btn-icon"
                             type="button"
-                            aria-label="Supprimer"
                             onClick={() => setDeleteTarget(u)}
                             style={{ color: "var(--critical)" }}
                           >
@@ -307,7 +326,7 @@ export default function AdminPage() {
       {tab === "roles" && (
         <div className={styles.rolesGrid}>
           {ROLES.map((r) => {
-            const count = users.filter((u) => u.role === r).length;
+            const count       = users.filter((u) => u.role === r).length;
             const activeCount = users.filter((u) => u.role === r && u.active).length;
             return (
               <div key={r} className="card card-p">
@@ -341,7 +360,7 @@ export default function AdminPage() {
 
       {tab === "permissions" && (
         <div>
-          <div className={styles.tabBar}>
+          <div className={styles.permRoleBar}>
             {ROLES.map((r) => (
               <button
                 key={r}
@@ -350,7 +369,7 @@ export default function AdminPage() {
                 className="btn"
                 style={{
                   background: permRole === r ? "var(--navy)" : "var(--surface)",
-                  color: permRole === r ? "white" : "var(--foreground)",
+                  color:      permRole === r ? "white"       : "var(--foreground)",
                   border: `1px solid ${permRole === r ? "var(--navy)" : "var(--border)"}`,
                 }}
               >
@@ -375,8 +394,8 @@ export default function AdminPage() {
                   {NAV_ITEMS.map((item) => {
                     const access = canAccess(permRole, item.key);
                     const create = access && canCreate(permRole, item.key);
-                    const edit = access && canEdit(permRole, item.key);
-                    const del = access && canDelete(permRole, item.key);
+                    const edit   = access && canEdit(permRole, item.key);
+                    const del    = access && canDelete(permRole, item.key);
                     return (
                       <tr key={item.key} className="table-row">
                         <td className="table-cell">
@@ -399,7 +418,6 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* User form modal */}
       <Modal
         open={formOpen}
         onClose={() => setFormOpen(false)}
@@ -448,14 +466,9 @@ export default function AdminPage() {
       <Confirm
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
-        onConfirm={() => {
-          if (deleteTarget) {
-            deleteUser(deleteTarget.id);
-            showToast("Utilisateur supprimé.", "success");
-          }
-        }}
+        onConfirm={() => deleteTarget && handleDelete(deleteTarget)}
         title="Supprimer cet utilisateur ?"
-        message={`${deleteTarget?.firstName} ${deleteTarget?.lastName} sera définitivement supprimé.`}
+        message={`${deleteTarget?.first_name} ${deleteTarget?.last_name} sera définitivement supprimé.`}
         variant="danger"
         confirmLabel="Supprimer"
       />

@@ -1,13 +1,13 @@
 "use client";
 
 import styles from "./page.module.css";
-
+import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, HardHat, LogIn } from "lucide-react";
+import { Eye, EyeOff, LogIn } from "lucide-react";
 import { loginSchema, type LoginInput } from "@/lib/validations";
 import { useAuthStore } from "@/lib/auth-store";
 import { ROLE_DEFAULT_PAGE, ROLE_LABELS } from "@/lib/permissions";
@@ -17,12 +17,12 @@ import { MOCK_USERS } from "@/lib/mock-data";
 import type { Role } from "@/types";
 
 const DEMO_ROLE_COLORS: Record<Role, string> = {
-  administrateur:        "#f97316",
-  responsable_logistique:"#2251d9",
-  chef_atelier:          "#7c3aed",
-  mecanicien:            "#475569",
-  chauffeur:             "#059669",
-  direction:             "#d97706",
+  administrateur:         "#f97316",
+  responsable_logistique: "#2251d9",
+  chef_atelier:           "#7c3aed",
+  mecanicien:             "#475569",
+  chauffeur:              "#059669",
+  direction:              "#d97706",
 };
 
 export default function LoginPage() {
@@ -41,14 +41,19 @@ export default function LoginPage() {
     defaultValues: { email: "", password: "" },
   });
 
-  function onSubmit(data: LoginInput) {
+  // ✅ async + await
+  async function onSubmit(data: LoginInput) {
     setServerError("");
-    const result = login(data.email, data.password);
-    if (!result.ok || !result.user) {
+    const result = await login(data.email, data.password);
+    if (!result.ok) {
       setServerError(result.error ?? "Connexion impossible.");
       return;
     }
-    router.push(ROLE_DEFAULT_PAGE[result.user.role]);
+    // ✅ récupérer l'user depuis le store après connexion
+    const currentUser = useAuthStore.getState().currentUser;
+    if (currentUser) {
+      router.push(ROLE_DEFAULT_PAGE[currentUser.role as Role]);
+    }
   }
 
   function quickFill(email: string) {
@@ -61,14 +66,17 @@ export default function LoginPage() {
     <div className={styles.wrapper}>
       <div className={styles.card}>
 
-        {/* Logo */}
-        <div className={styles.logoRow}>
-          <div className={styles.logoIcon}>
-            <HardHat size={16} color="white" />
-          </div>
-          <span className={styles.logoName}>VICAS GMAO</span>
-        </div>
+      
 
+<div className={styles.logoRow}>
+  <Image
+    src="/logo.png"
+    alt="VICAS GMAO"
+    width={120}
+    height={40}
+    style={{ objectFit: "contain" }}
+  />
+</div>
         <h1 className={styles.heading}>Connexion</h1>
         <p className={styles.subText}>
           Accédez à votre espace de gestion de flotte.
@@ -133,7 +141,6 @@ export default function LoginPage() {
           </Link>
         </p>
 
-        {/* Comptes de démonstration */}
         <div className={styles.demoSection}>
           <p className={styles.demoTitle}>Comptes de démonstration</p>
           <div className={styles.demoGrid}>

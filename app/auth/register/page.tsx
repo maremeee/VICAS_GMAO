@@ -1,13 +1,13 @@
 "use client";
 
 import styles from "./page.module.css";
-
+import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, HardHat, UserPlus } from "lucide-react";
+import { Eye, EyeOff, UserPlus } from "lucide-react";
 import { registerSchema, type RegisterInput } from "@/lib/validations";
 import { useAuthStore } from "@/lib/auth-store";
 import { useToastStore } from "@/lib/toast-store";
@@ -17,12 +17,8 @@ import { Button } from "@/components/ui/Button";
 import type { Role } from "@/types";
 
 const ROLES: Role[] = [
-  
-  "responsable_logistique",
-  "chef_atelier",
   "mecanicien",
   "chauffeur",
-  "direction",
 ];
 
 function strengthOf(password: string): { score: number; label: string; color: string } {
@@ -62,15 +58,17 @@ export default function RegisterPage() {
   const password = watch("password");
   const strength = strengthOf(password || "");
 
-  function onSubmit(data: RegisterInput) {
+  async function onSubmit(data: RegisterInput) {
     setServerError("");
-    const result = register2({
-      firstName: data.firstName,
-      lastName:  data.lastName,
-      email:     data.email,
-      phone:     data.phone,
-      role:      data.role,
-    });
+    const result = await register2({
+      first_name:            data.firstName,
+      last_name:             data.lastName,
+      email:                 data.email,
+      phone:                 data.phone,
+      role:                  data.role,
+      password:              data.password,
+      password_confirmation: data.confirmPassword,
+    } as any);
     if (!result.ok) {
       setServerError(result.error ?? "Inscription impossible.");
       return;
@@ -85,10 +83,13 @@ export default function RegisterPage() {
 
         {/* Logo */}
         <div className={styles.logoRow}>
-          <div className={styles.logoIcon}>
-            <HardHat size={16} color="white" />
-          </div>
-          <span className={styles.logoName}>VICAS GMAO</span>
+          <Image
+            src="/logo.png"
+            alt="VICAS GMAO"
+            width={120}
+            height={40}
+            style={{ objectFit: "contain" }}
+          />
         </div>
 
         <h1 className={styles.heading}>Créer un compte</h1>

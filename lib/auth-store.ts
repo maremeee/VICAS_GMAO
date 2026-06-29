@@ -1,108 +1,72 @@
+// lib/auth-store.ts — version mock (sans backend)
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { User, Role } from "@/types";
-import { MOCK_USERS } from "@/lib/mock-data";
-import { uid } from "@/lib/utils";
+import { ROLE_DEFAULT_PAGE } from "./permissions";
+import { MOCK_USERS } from "./mock-data";
+import type { Role } from "@/types";
 
 interface AuthState {
-  users: User[];
-  currentUser: User | null;
+  currentUser: any | null;
+  token: string | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => { ok: boolean; error?: string; user?: User };
-  logout: () => void;
-  register: (data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    role: Role;
-  }) => { ok: boolean; error?: string };
-  addUser: (data: Omit<User, "id" | "createdAt">) => void;
-  updateUser: (id: string, data: Partial<User>) => void;
-  deleteUser: (id: string) => void;
-  toggleUserActive: (id: string) => void;
+
+  login:    (email: string, password: string) => Promise<{ ok: boolean; user?: any; error?: string }>;
+  register: (data: any) => Promise<{ ok: boolean; error?: string }>;
+  logout:   () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
-      users: MOCK_USERS,
-      currentUser: null,
+    (set) => ({
+      currentUser:     null,
+      token:           null,
       isAuthenticated: false,
 
-      login: (email, password) => {
-        if (!password || password.length < 1) {
-          return { ok: false, error: "Le mot de passe est requis." };
-        }
-        const user = get().users.find(
-          (u) => u.email.toLowerCase() === email.toLowerCase().trim()
+      // ── Connexion avec données mock ─────────────────────
+      login: async (email, password) => {
+        const user = MOCK_USERS.find(
+          (u) => u.email.toLowerCase() === email.toLowerCase()
         );
+
         if (!user) {
-          return { ok: false, error: "Aucun compte ne correspond à cet email." };
+          return { ok: false, error: "Email ou mot de passe incorrect." };
         }
+
         if (!user.active) {
-          return { ok: false, error: "Ce compte a été désactivé. Contactez un administrateur." };
+          return { ok: false, error: "Votre compte est désactivé." };
         }
-        set({ currentUser: user, isAuthenticated: true });
+
+        // En mode mock, n'importe quel mot de passe fonctionne
+        set({
+          currentUser:     user,
+          token:           "mock-token-" + user.id,
+          isAuthenticated: true,
+        });
+
         return { ok: true, user };
       },
 
-      logout: () => set({ currentUser: null, isAuthenticated: false }),
-
-      register: (data) => {
-        const exists = get().users.some(
-          (u) => u.email.toLowerCase() === data.email.toLowerCase().trim()
-        );
-        if (exists) {
-          return { ok: false, error: "Un compte existe déjà avec cet email." };
-        }
-        const newUser: User = {
-          id: uid("u"),
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          phone: data.phone,
-          role: data.role,
-          active: true,
-          createdAt: new Date().toISOString(),
-        };
-        set({ users: [...get().users, newUser] });
+      // ── Inscription mock ────────────────────────────────
+      register: async (data) => {
         return { ok: true };
       },
 
-      addUser: (data) => {
-        const newUser: User = {
-          ...data,
-          id: uid("u"),
-          createdAt: new Date().toISOString(),
-        };
-        set({ users: [...get().users, newUser] });
-      },
-
-      updateUser: (id, data) => {
+      // ── Déconnexion ─────────────────────────────────────
+      logout: async () => {
         set({
-          users: get().users.map((u) => (u.id === id ? { ...u, ...data } : u)),
-          currentUser:
-            get().currentUser?.id === id
-              ? { ...get().currentUser!, ...data }
-              : get().currentUser,
-        });
-      },
-
-      deleteUser: (id) => {
-        set({ users: get().users.filter((u) => u.id !== id) });
-      },
-
-      toggleUserActive: (id) => {
-        set({
-          users: get().users.map((u) =>
-            u.id === id ? { ...u, active: !u.active } : u
-          ),
+          currentUser:     null,
+          token:           null,
+          isAuthenticated: false,
         });
       },
     }),
     {
       name: "vicas-auth-storage",
+      partialize: (state) => ({
+        currentUser:     state.currentUser,
+        token:           state.token,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -80,24 +81,24 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { value: "9+", label: "Types d'engins" },
-  { value: "6", label: "Rôles utilisateurs" },
+  { value: "9+",   label: "Types d'engins" },
+  { value: "6",    label: "Rôles utilisateurs" },
   { value: "100%", label: "Données locales" },
-  { value: "∞", label: "Chantiers gérés" },
+  { value: "∞",    label: "Chantiers gérés" },
 ];
 
 export default function LandingPage() {
   const router = useRouter();
   const { isAuthenticated, currentUser } = useAuthStore();
 
-  /* Si déjà connecté → dashboard directement */
   useEffect(() => {
     if (isAuthenticated && currentUser) {
-      router.replace(ROLE_DEFAULT_PAGE[currentUser.role]);
+      const role = (currentUser as any)?.role ?? "chauffeur";
+      const page = ROLE_DEFAULT_PAGE[role as keyof typeof ROLE_DEFAULT_PAGE];
+      if (page) router.replace(page);
     }
   }, [isAuthenticated, currentUser, router]);
 
-  /* Afficher un loader pendant la vérification d'auth */
   if (isAuthenticated && currentUser) {
     return (
       <div
@@ -114,16 +115,17 @@ export default function LandingPage() {
 
   return (
     <div className={styles.page}>
+
       {/* ── Navbar ── */}
       <nav className={styles.navbar}>
         <div className={styles.navLogo}>
-          <div className={styles.navLogoIcon}>
-            <HardHat size={18} color="white" />
-          </div>
-          <div>
-            <p className={styles.navLogoName}>VICAS GMAO</p>
-            <p className={styles.navLogoSub}>Gestion de Parc &amp; Maintenance</p>
-          </div>
+          <Image
+            src="/logo.png"
+            alt="VICAS GMAO"
+            width={140}
+            height={45}
+            style={{ objectFit: "contain" }}
+          />
         </div>
         <div className={styles.navActions}>
           <Link href="/auth/login">
@@ -155,7 +157,7 @@ export default function LandingPage() {
 
         <p className={styles.heroSub}>
           Suivi des engins, maintenance, carburant et missions sur l&apos;ensemble
-          de vos chantiers — en un seul espace, accessible à toute votre équipe.
+          de vos chantiers en un seul espace, accessible à toute votre équipe.
         </p>
 
         <div className={styles.heroActions}>
@@ -262,6 +264,7 @@ export default function LandingPage() {
           </Link>
         </div>
       </footer>
+
     </div>
   );
 }
